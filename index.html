@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Master</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f5ff;color:#20264a}
+header{background:linear-gradient(135deg,#292c78,#7565e8);color:white;padding:28px 18px;text-align:center}
+header h1{font-size:30px;margin:5px}
+header p{opacity:.9}
+nav{display:flex;gap:8px;overflow-x:auto;padding:12px;background:white;position:sticky;top:0;z-index:5}
+nav button{border:0;background:#eef0ff;color:#393d83;padding:12px 15px;border-radius:12px;white-space:nowrap;font-weight:bold}
+nav button.active{background:#6256d9;color:white}
+main{max-width:850px;margin:auto;padding:18px}
+.card{background:white;padding:20px;border-radius:18px;margin-bottom:16px;box-shadow:0 4px 18px #20264a0c}
+h2{color:#393d83}
+h3{margin-top:5px}
+.hero{background:linear-gradient(135deg,#6256d9,#9585f5);color:white}
+.hero h2{color:white;font-size:27px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:#f0efff;border-radius:13px;padding:15px;text-align:center}
+.stat strong{display:block;font-size:23px;color:#6256d9}
+button{cursor:pointer}
+.action{background:#6256d9;color:white;border:0;border-radius:11px;padding:12px 17px;font-size:15px;margin:5px 3px}
+.action:hover{background:#493db9}
+.option{display:block;width:100%;text-align:left;background:#f1f2ff;border:2px solid transparent;padding:13px;margin:9px 0;border-radius:11px;color:#24264a;font-size:15px}
+.option:focus,.option:hover{border-color:#7565e8}
+.option.correct{background:#d9f8e7;border-color:#26a66a}
+.option.wrong{background:#ffe1e1;border-color:#e45c5c}
+.word{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px;border-bottom:1px solid #eee}
+.word strong{font-size:18px;color:#5145bd}
+.small{color:#777;font-size:13px}
+.result{font-weight:bold;margin-top:12px}
+input{padding:12px;border:1px solid #ccc;border-radius:10px;width:100%;font-size:16px}
+section{display:none}
+section.show{display:block}
+footer{text-align:center;padding:25px;color:#777}
+@media(max-width:450px){.stats{grid-template-columns:1fr 1fr}.hero h2{font-size:23px}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎓 English Master</h1>
+<p>Learn English. Practice. Improve. Succeed!</p>
+<p>Твоя онлайн-школа английского языка</p>
+</header>
+
+<nav>
+<button class="active" onclick="openTab('home',this)">🏠 Главная</button>
+<button onclick="openTab('vocab',this)">📚 Слова</button>
+<button onclick="openTab('grammar',this)">📝 Тесты</button>
+<button onclick="openTab('listen',this)">🎧 Listening</button>
+<button onclick="openTab('progress',this)">🏆 Прогресс</button>
+</nav>
+
+<main>
+
+<section id="home" class="show">
+<div class="card hero">
+<h2>Welcome to English Master!</h2>
+<p>Изучай английский язык от A1 до C2. Учись каждый день и достигай новых высот!</p>
+<button class="action" style="background:white;color:#5145bd" onclick="openTab('vocab',document.querySelectorAll('nav button')[1])">Начать обучение →</button>
+</div>
+
+<div class="stats">
+<div class="stat"><strong id="points">0</strong>Баллы</div>
+<div class="stat"><strong id="learned">0</strong>Слов изучено</div>
+<div class="stat"><strong id="tests">0</strong>Тестов пройдено</div>
+</div>
+
+<div class="card">
+<h2>📖 Уровни английского</h2>
+<p>🟢 A1 — Beginner</p>
+<p>🟢 A2 — Elementary</p>
+<p>🔵 B1 — Intermediate</p>
+<p>🔵 B2 — Upper Intermediate</p>
+<p>🟣 C1 — Advanced</p>
+<p>🟣 C2 — Proficiency</p>
+<p class="small">Выбирай уровень и постепенно развивай свои знания.</p>
+</div>
+
+<div class="card">
+<h2>🌟 Ежедневная цель</h2>
+<p>Выучи 5 новых английских слов и пройди один тест сегодня!</p>
+</div>
+</section>
+
+<section id="vocab">
+<div class="card">
+<h2>📚 English Vocabulary</h2>
+<p>Нажимай на динамик, чтобы услышать произношение.</p>
+<div id="words"></div>
+</div>
+</section>
+
+<section id="grammar">
+<div class="card">
+<h2>📝 Grammar Test A1–A2</h2>
+<p id="questionNumber"></p>
+<h3 id="question"></h3>
+<div id="answers"></div>
+<p class="result" id="feedback"></p>
+<button class="action" id="next" onclick="nextQuestion()" style="display:none">Следующий вопрос →</button>
+</div>
+</section>
+
+<section id="listen">
+<div class="card">
+<h2>🎧 Listening Practice</h2>
+<p>Прослушай английское предложение. Постарайся понять его смысл.</p>
+<div id="audioText" style="font-size:22px;font-weight:bold;margin:25px 0">Hello! How are you today?</div>
+<button class="action" onclick="speak()">🔊 Прослушать</button>
+<button class="action" onclick="nextAudio()">Следующее предложение →</button>
+<p id="translation" class="small"></p>
+</div>
+</section>
+
+<section id="progress">
+<div class="card">
+<h2>🏆 Твой прогресс</h2>
+<div class="stats">
+<div class="stat"><strong id="pPoints">0</strong>Баллы</div>
+<div class="stat"><strong id="pWords">0</strong>Слова</div>
+<div class="stat"><strong id="pTests">0</strong>Тесты</div>
+</div>
+<h3>Продолжай обучение!</h3>
+<p>Все результаты сохраняются на этом устройстве.</p>
+<button class="action" onclick="resetProgress()">Сбросить прогресс</button>
+</div>
+</section>
+
+</main>
+
+<footer>
+🎓 English Master © 2026<br>
+Learn English every day!
+</footer>
+
+<script>
+let score=Number(localStorage.getItem('em_score'))||0;
+let learned=Number(localStorage.getItem('em_words'))||0;
+let tests=Number(localStorage.getItem('em_tests'))||0;
+
+function update(){
+document.getElementById('points').textContent=score;
+document.getElementById('learned').textContent=learned;
+document.getElementById('tests').textContent=tests;
+document.getElementById('pPoints').textContent=score;
+document.getElementById('pWords').textContent=learned;
+document.getElementById('pTests').textContent=tests;
+localStorage.setItem('em_score',score);
+localStorage.setItem('em_words',learned);
+localStorage.setItem('em_tests',tests);
+}
+
+function openTab(id,btn){
+document.querySelectorAll('main section').forEach(s=>s.classList.remove('show'));
+document.getElementById(id).classList.add('show');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+}
+
+const vocabulary=[
+['Hello','Привет','A1'],
+['Beautiful','Красивый','A1'],
+['Remember','Помнить','A1'],
+['Understand','Понимать','A1'],
+['Improve','Улучшать','A2'],
+['Achieve','Достигать','A2'],
+['Believe','Верить','A2'],
+['Continue','Продолжать','A2'],
+['Knowledge','Знание','B1'],
+['Opportunity','Возможность','B1'],
+['Environment','Окружающая среда','B1'],
+['Significant','Значительный','B2'],
+['Determine','Определять','B2'],
+['Consequently','Следовательно','C1'],
+['Substantiate','Обосновывать','C1']
+];
+
+function speakText(text){
+if(!('speechSynthesis' in window)){
+alert('Озвучивание не поддерживается этим браузером');
+return;
+}
+speechSynthesis.cancel();
+let msg=new SpeechSynthesisUtterance(text);
+msg.lang='en-US';
+msg.rate=0.85;
+speechSynthesis.speak(msg);
+}
+
+document.getElementById('words').innerHTML=vocabulary.map((w,i)=>`
+<div class="word">
+<div><strong>${w[0]}</strong><br>${w[1]} <span class="small">(${w[2]})</span></div>
+<button class="action" onclick="speakText('${w[0]}')">🔊</button>
+</div>`).join('');
+
+const questions=[
+{q:'She ___ a student.',a:['am','is','are','be'],c:1},
+{q:'They ___ football every day.',a:['plays','playing','play','played'],c:2},
+{q:'I ___ watching TV now.',a:['am','is','are','be'],c:0},
+{q:'He ___ to school yesterday.',a:['go','goes','went','going'],c:2},
+{q:'There ___ two books on the table.',a:['is','are','am','be'],c:1},
+{q:'I have lived here ___ 2020.',a:['for','since','at','in'],c:1},
+{q:'She is ___ than her sister.',a:['tall','taller','tallest','more tall'],c:1},
+{q:'If it rains, I ___ at home.',a:['stay','stayed','will stay','staying'],c:2},
+{q:'We ___ already finished our homework.',a:['has','have','having','had'],c:1},
+{q:'English ___ all over the world.',a:['speaks','is spoken','speak','speaking'],c:1}
+];
+
+let qi=0,answered=false;
+function showQuestion(){
+answered=false;
+let q=questions[qi];
+document.getElementById('questionNumber').textContent='Вопрос '+(qi+1)+' из '+questions.length;
+document.getElementById('question').textContent=q.q;
+document.getElementById('feedback').textContent='';
+document.getElementById('next').style.display='none';
+document.getElementById('answers').innerHTML=q.a.map((a,i)=>`
+<button class="option" onclick="answer(${i},this)">${String.fromCharCode(65+i)}. ${a}</button>`).join('');
+}
+function answer(i,btn){
+if(answered)return;
+answered=true;
+let q=questions[qi];
+document.querySelectorAll('#answers button').forEach((b,j)=>{
+if(j===q.c)b.classList.add('correct');
+});
+if(i===q.c){
+score+=10;
+document.getElementById('feedback').textContent='✅ Правильно! +10 баллов';
+}else{
+btn.classList.add('wrong');
+document.getElementById('feedback').textContent='❌ Неверно. Правильный ответ: '+q.a[q.c];
+}
+update();
+document.getElementById('next').style.display='inline-block';
+}
+function nextQuestion(){
+if(!answered)return;
+if(qi===questions.length-1){
+tests++;
+qi=0;
+update();
+document.getElementById('question').textContent='🎉 Ты завершила тест!';
+document.getElementById('questionNumber').textContent='Тест окончен';
+document.getElementById('answers').innerHTML='<p>Отличная работа! Ты можешь пройти тест ещё раз.</p>';
+document.getElementById('feedback').textContent='';
+document.getElementById('next').style.display='none';
+return;
+}
+qi++;
+showQuestion();
+}
+
+let audioItems=[
+['Hello! How are you today?','Привет! Как ты сегодня?'],
+['My name is Anna.','Меня зовут Анна.'],
+['I love learning English.','Я люблю изучать английский.'],
+['She goes to school every morning.','Она ходит в школу каждое утро.'],
+['The weather is beautiful today.','Сегодня прекрасная погода.'],
+['I want to become a doctor.','Я хочу стать врачом.'],
+['Practice makes progress.','Практика помогает добиваться прогресса.']
+];
+let ai=0;
+function speak(){speakText(audioItems[ai][0]);}
+function nextAudio(){
+ai=(ai+1)%audioItems.length;
+document.getElementById('audioText').textContent=audioItems[ai][0];
+document.getElementById('translation').textContent=audioItems[ai][1];
+}
+
+function resetProgress(){
+if(confirm('Ты действительно хочешь сбросить весь прогресс?')){
+score=0;learned=0;tests=0;update();
+}
+}
+
+update();
+showQuestion();
+</script>
+</body>
+  </html>
+  
